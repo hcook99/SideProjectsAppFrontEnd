@@ -11,7 +11,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 
 const cache = new InMemoryCache();
 const link = new HttpLink({
-  uri: 'https://sideprojectsappserver.herokuapp.com/projects'
+  uri: 'https://sideprojectsappserver.herokuapp.com/api/v1/project'
 })
 
 const client = new ApolloClient({

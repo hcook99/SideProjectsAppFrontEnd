@@ -7,7 +7,6 @@ import SearchIcon from '@material-ui/icons/Search';
 import './index.css'
 import logo from './ideas.svg'
 
-
 const SearchBar = withStyles({
   root: {
     '& .MuiOutlinedInput-root': {
@@ -29,12 +28,23 @@ function App(){
   let dataCleaned;
   const [searchTerm, setSearchTerm] = React.useState("");
   const handleChange = event => {
-    setSearchTerm(event.target.value);
+    if(event.target.value == '\n'){
+    }
+    else{
+      setSearchTerm(event.target.value);
+    }
   };
+
+  // handleSubmit = event => {
+  //   React.useEffect(() => {
+
+  //   })
+  // }
+
   document.body.style.backgroundColor = '#EDF0F1'
 
   if (loading) return <body style={{'display': 'grid', 'height': '100vh', margin: 0, placeItems: 'center center'}}><p>Loading...</p></body>
-  if (error) return <p>Error</p>;
+if (error) return <p>Error {console.log(error)}</p>;
 
   if(data){
     dataCleaned = data.allProjects.edges
@@ -77,6 +87,15 @@ function App(){
             </Grid>
         </Toolbar>
       </AppBar>
+      <Toolbar/>
+      <Grid container style={{width: '90%'}}>
+        <Grid item xs={3} style={{backgroundColor: 'gray'}}>
+
+        </Grid>
+        <Grid item xs={9} style={{backgroundColor: 'blue'}}>
+                
+        </Grid>
+      </Grid>
     </div>
   );
 }

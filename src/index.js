@@ -4,25 +4,39 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
-import { ApolloProvider } from '@apollo/react-hooks';
+import { createBrowserHistory } from 'history';
+import { Auth0Provider } from '@auth0/auth0-react';
+import { ApolloProvider as ApolloHooksProvider } from '@apollo/react-hooks'
+import { ApolloClient, ApolloProvider, InMemoryCache, HttpLink } from '@apollo/client';
 
-const cache = new InMemoryCache();
+export const history = createBrowserHistory();
+
 const link = new HttpLink({
-  uri: 'https://sideprojectsappserver.herokuapp.com/api/v1/project'
-})
+  uri: 'https://sideprojectsappserver.herokuapp.com/api/projects'
+});   
 
 const client = new ApolloClient({
-  cache,
-  link
-})
+  link: link,
+  cache: new InMemoryCache()
+});
+
+const onRedirectCallback = (appState) => {
+  history.replace(appState?.returnTo || window.location.pathname);
+};
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <App />
-  </ApolloProvider>,
+  <Auth0Provider
+    domain={process.env.REACT_APP_DOMAIN}
+    clientId={process.env.REACT_APP_CLIENT_ID}
+    redirectUri={window.location.href}
+    onRedirectCallback={onRedirectCallback}
+    cacheLocation="localstorage">
+    <ApolloProvider client={client}>
+      <ApolloHooksProvider client={client}>
+        <App/>
+      </ApolloHooksProvider>
+    </ApolloProvider>
+  </Auth0Provider>,
   document.getElementById('root')
 );
 

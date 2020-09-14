@@ -22,12 +22,12 @@ const StyledButton = withStyles({
 function LoginButton() {
   const {
     isAuthenticated,
-    loginWithPopup,
+    loginWithRedirect,
   } = useAuth0();
 
   
   return !isAuthenticated && (
-    <StyledButton onClick={loginWithPopup}>Log in</StyledButton>
+    <StyledButton onClick={loginWithRedirect}>Log in</StyledButton>
   );
 }
 

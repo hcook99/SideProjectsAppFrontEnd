@@ -24,13 +24,10 @@ const onRedirectCallback = (appState) => {
   history.replace(appState?.returnTo || window.location.pathname);
 };
 
-console.log(process.env.AUTH0_APP_DOMAIN);
-console.log(process.env.AUTH0_CLIENT_ID);
-
 ReactDOM.render(
   <Auth0Provider
-    domain={process.env.AUTH0_APP_DOMAIN}
-    clientId={process.env.AUTH0_CLIENT_ID}
+    domain={process.env.REACT_APP_AUTH0_DOMAIN}
+    clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
     redirectUri={window.location.href}
     onRedirectCallback={onRedirectCallback}
     cacheLocation="localstorage">

@@ -91,11 +91,11 @@ function ProjectList(props) {
 
   if(props.projects.filter(props.filterProject).length===0){
     return (
-      <Paper>
-        <Grid container alignItems="center" justify="center" direction="column" style={{backgroundColor: 'white'}}>
+      <Paper elevation={3}>
+        <Grid container alignItems="center" justify="center" direction="column" style={{backgroundColor: 'white', height: '55vh'}}>
           <Grid item>
             <br/>
-            <img src={imageToSetForMissing} alt={`${props.filterType} is missing.`} style={{height: '18vh'}}/>
+            <img src={imageToSetForMissing} alt={`${props.filterType} is missing.`} style={{marginLeft: imageToSetForMissing===created ? '35px' : null, height: '18vh'}}/>
             <br/><br/>
           </Grid>
           <Grid item>

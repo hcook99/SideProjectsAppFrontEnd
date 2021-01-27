@@ -189,7 +189,7 @@ function Home() {
           <ProjectList
             projects={dataCleaned}
             filterProject={filterProject}
-            userSub={user.sub}
+            userSub={user ? user.sub : null}
             isAuthenticated={isAuthenticated}
             loginWithRedirect={() => loginWithRedirect()}
             refetch={() => refetch()}

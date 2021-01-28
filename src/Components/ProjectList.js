@@ -7,7 +7,8 @@ import {
   ListItemText,
   Collapse,
   List,
-  Paper
+  Paper,
+  Box
 } from '@material-ui/core';
 import { UPDATE_LIKE, UPDATE_BOOKMARK } from '../graphqlQueries/index';
 import { useMutation } from '@apollo/client';
@@ -205,9 +206,11 @@ function ProjectList(props) {
               </BookmarkButton>
               <br />
               <Collapse in={openDescription[i]}>
-                <ReactMarkdown plugins={[gfm]} renderers={renderers}>
-                  {project.node.description}
-                </ReactMarkdown>
+                <Box style={{marginLeft: '1rem'}}>
+                  <ReactMarkdown plugins={[gfm]} renderers={renderers}>
+                    {project.node.description}
+                  </ReactMarkdown>
+                </Box>
               </Collapse>
             </React.Fragment>
           }

@@ -36,6 +36,7 @@ export const BookmarkButton = materialStyle(({ isBookmarked, ...other }) => (
   <Button {...other} />
 ))({
   display: 'flex',
+  marginLeft: '0.2rem',
   color: (props) => (props.isBookmarked ? '#007AFE' : '#9E9E9E'),
   '&:hover': {
     backgroundColor: 'transparent',

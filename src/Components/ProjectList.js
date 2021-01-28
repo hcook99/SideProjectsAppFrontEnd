@@ -23,6 +23,7 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import created from '../create.svg';
 import liked from '../liked.svg';
 import bookmarked from '../bookmark.svg';
+import ReactMarkdown from 'react-markdown'
 
 function ProjectList(props) {
   const [openDescription, setOpenDescription] = React.useState(new Array(props.projects.length).fill(false));
@@ -197,9 +198,9 @@ function ProjectList(props) {
               </BookmarkButton>
               <br />
               <Collapse in={openDescription[i]}>
-                <ProjectsDescriptionText>
+                <ReactMarkdown>
                   {project.node.description}
-                </ProjectsDescriptionText>
+                </ReactMarkdown>
               </Collapse>
             </React.Fragment>
           }

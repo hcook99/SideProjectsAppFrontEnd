@@ -7,8 +7,7 @@ import {
   ListItemText,
   Collapse,
   List,
-  Paper,
-  Box
+  Paper
 } from '@material-ui/core';
 import { UPDATE_LIKE, UPDATE_BOOKMARK } from '../graphqlQueries/index';
 import { useMutation } from '@apollo/client';

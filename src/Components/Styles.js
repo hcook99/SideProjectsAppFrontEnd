@@ -24,6 +24,13 @@ export const ProjectsTitleText = styled(Typography)`
   font-weight: bolder;
 `;
 
+export const ProjectsDescriptionText = styled(Typography)`
+  font-family: Montserrat;
+  color: black;
+  margin-left: 1rem;
+  font-size: 1rem;
+`;
+
 export const BookmarkText = styled(Typography)`
   font-family: Montserrat;
   font-weight: 600;

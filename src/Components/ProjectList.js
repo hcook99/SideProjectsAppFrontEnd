@@ -17,6 +17,7 @@ import {
   ProjectsTitleText,
   BookmarkText,
   BookmarkButton,
+  ProjectsDescriptionText
 } from './Styles';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -206,11 +207,9 @@ function ProjectList(props) {
               </BookmarkButton>
               <br />
               <Collapse in={openDescription[i]}>
-                <Box style={{marginLeft: '1rem'}}>
-                  <ReactMarkdown plugins={[gfm]} renderers={renderers}>
-                    {project.node.description}
-                  </ReactMarkdown>
-                </Box>
+                <ProjectsDescriptionText component='div'>
+                  <ReactMarkdown plugins={[gfm]} renderers={renderers} children={project.node.description}/>
+                </ProjectsDescriptionText>
               </Collapse>
             </React.Fragment>
           }

@@ -13,7 +13,6 @@ import { UPDATE_LIKE, UPDATE_BOOKMARK } from '../graphqlQueries/index';
 import { useMutation } from '@apollo/client';
 import {
   UpVoteButton,
-  ProjectsDescriptionText,
   ProjectsTitleText,
   BookmarkText,
   BookmarkButton,
@@ -23,12 +22,20 @@ import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import created from '../create.svg';
 import liked from '../liked.svg';
 import bookmarked from '../bookmark.svg';
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown';
+import gfm from 'remark-gfm';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
 
 function ProjectList(props) {
   const [openDescription, setOpenDescription] = React.useState(new Array(props.projects.length).fill(false));
   const [addLike] = useMutation(UPDATE_LIKE);
   const [addBookmark] = useMutation(UPDATE_BOOKMARK);
+
+  const renderers = {
+    code: ({language, value}) => {
+      return <SyntaxHighlighter language={language} children={value} />
+    }
+  }
 
   const clickOpenDescription = (i) => {
     const temp = [...openDescription];
@@ -198,7 +205,7 @@ function ProjectList(props) {
               </BookmarkButton>
               <br />
               <Collapse in={openDescription[i]}>
-                <ReactMarkdown>
+                <ReactMarkdown plugins={[gfm]} renderers={renderers}>
                   {project.node.description}
                 </ReactMarkdown>
               </Collapse>

@@ -160,7 +160,7 @@ function ProjectAppBar(props) {
                   color: 'black',
                   fontFamily: 'Montserrat',
                   fontWeight: 'bolder',
-                  fontSize: '1.2rem'
+                  fontSize: '1.25rem'
                 }}>
                 Side
                 <br />

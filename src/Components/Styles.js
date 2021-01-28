@@ -19,7 +19,7 @@ export const FilterStyleTypography = styled(Typography)`
 export const ProjectsTitleText = styled(Typography)`
   font-family: Montserrat;
   color: black;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   margin-left: 1rem;
   font-weight: bolder;
 `;
@@ -43,7 +43,7 @@ export const BookmarkButton = materialStyle(({ isBookmarked, ...other }) => (
   <Button {...other} />
 ))({
   display: 'flex',
-  marginLeft: '0.2rem',
+  marginLeft: '0.3rem',
   color: (props) => (props.isBookmarked ? '#007AFE' : '#9E9E9E'),
   '&:hover': {
     backgroundColor: 'transparent',

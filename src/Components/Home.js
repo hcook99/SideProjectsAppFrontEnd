@@ -169,6 +169,7 @@ function Home() {
                 'Developer Tooling',
                 'AR/VR',
                 'Bots',
+                'Other'
               ]}
               categoryTitle='Platform'
               changeSelection={changeSelectors}

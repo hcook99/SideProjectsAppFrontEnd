@@ -264,6 +264,7 @@ function ProjectAppBar(props) {
                       'Developer Tooling',
                       'AR/VR',
                       'Bots',
+                      'Other'
                     ]}
                     handleChange={changeSelect}
                   />

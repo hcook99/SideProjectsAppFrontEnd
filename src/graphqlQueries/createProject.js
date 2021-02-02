@@ -5,7 +5,7 @@ export const CREATE_PROJECT = gql`
     $title: String!
     $description: String!
     $creatorUserId: String!
-    $platform: String!
+    $platforms: [String!]!
     $difficulty: String!
     $amountOfWork: String!
     $tags: [String!]!
@@ -14,7 +14,7 @@ export const CREATE_PROJECT = gql`
       title: $title
       description: $description
       creatorUserId: $creatorUserId
-      platform: $platform
+      platforms: $platforms
       difficulty: $difficulty
       amountOfWork: $amountOfWork
       tags: $tags

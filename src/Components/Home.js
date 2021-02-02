@@ -1,12 +1,6 @@
 import React from 'react';
-import {
-  GET_ALL_PROJECTS
-} from '../graphqlQueries/index';
-import {
-  Grid,
-  List,
-  ListItem
-} from '@material-ui/core';
+import { GET_ALL_PROJECTS } from '../graphqlQueries/index';
+import { Grid, List, ListItem } from '@material-ui/core';
 import '../index.css';
 import { useQuery } from '@apollo/client';
 import { withAuth0 } from '@auth0/auth0-react';
@@ -15,15 +9,14 @@ import ListOfCheckBoxes from './ListOfCheckBoxes';
 import { useAuth0 } from '@auth0/auth0-react';
 import ProjectAppBar from './ProjectAppBar';
 import ProjectList from './ProjectList';
-import {
-  FilterStyleTypography
-} from './Styles';
+import { FilterStyleTypography } from './Styles';
 
 function Home() {
   const [search, setSearch] = React.useState('');
   const [platforms, setPlatforms] = React.useState([]);
   const [difficulties, setDifficulties] = React.useState([]);
   const [amountOfWork, setAmountOfWork] = React.useState([]);
+  const [tagClick, setTagClick] = React.useState(false);
 
   const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
 
@@ -34,15 +27,16 @@ function Home() {
 
   const changeSearch = (newSearch) => {
     setSearch(newSearch);
+    setTagClick(false);
   };
 
   const changeSelectors = (name, value, category) => {
     switch (category) {
       case 'Platform':
         value
-          ? setPlatforms((platforms) => platforms.concat(name.toLowerCase()))
+          ? setPlatforms((platforms) => platforms.concat(name))
           : setPlatforms((platforms) =>
-              platforms.filter((platform) => name.toLowerCase() !== platform)
+              platforms.filter((platform) => name !== platform)
             );
         break;
       case 'Difficulty':
@@ -72,26 +66,34 @@ function Home() {
     }
   };
 
+  const searchTag = (tag) => {
+    setSearch(tag);
+    setTagClick(true);
+  }
+
+  const filterWithTags = (value) => {
+    return (
+      value.node.tags.some(
+        (tag) => tag.toLowerCase() === search.toLowerCase()
+      )
+    )
+  }
+
   const filterProject = (value) => {
     return (
-      (value.node.title
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-        value.node.description
-          .toLowerCase()
-          .includes(search.toLowerCase())) &&
-      (platforms.includes(value.node.platform.toLowerCase()) ||
+      (value.node.title.toLowerCase().includes(search.toLowerCase()) ||
+        value.node.description.toLowerCase().includes(search.toLowerCase()) ||
+        value.node.tags.some(
+          (tag) => tag.toLowerCase() === search.toLowerCase()
+        )) &&
+      (platforms.some((platform) => value.node.platforms.includes(platform)) ||
         platforms.length === 0) &&
-      (difficulties.includes(
-        value.node.difficulty.toLowerCase()
-      ) ||
+      (difficulties.includes(value.node.difficulty.toLowerCase()) ||
         difficulties.length === 0) &&
-      (amountOfWork.includes(
-        value.node.amountOfWork.toLowerCase()
-      ) ||
+      (amountOfWork.includes(value.node.amountOfWork.toLowerCase()) ||
         amountOfWork.length === 0)
     );
-  } 
+  };
 
   const handleCreate = () => {
     refetch();
@@ -109,6 +111,7 @@ function Home() {
         loginWithRedirect={loginWithRedirect}
         handleChange={changeSearch}
         handleCreateProject={handleCreate}
+        parentSearch={search}
       />
       <Grid
         container
@@ -169,7 +172,7 @@ function Home() {
                 'Developer Tooling',
                 'AR/VR',
                 'Bots',
-                'Other'
+                'Other',
               ]}
               categoryTitle='Platform'
               changeSelection={changeSelectors}
@@ -186,10 +189,15 @@ function Home() {
             />
           </List>
         </Grid>
-        <Grid item xs={8} style={{ height: '60vh', padding: '0', marginLeft: '10px' }}>
+        <Grid
+          item
+          xs={8}
+          style={{ height: '60vh', padding: '0', marginLeft: '10px' }}>
           <ProjectList
             projects={dataCleaned}
-            filterProject={filterProject}
+            disableTags={false}
+            searchTag={searchTag}
+            filterProject={tagClick ? filterWithTags : filterProject}
             userSub={user ? user.sub : null}
             isAuthenticated={isAuthenticated}
             loginWithRedirect={() => loginWithRedirect()}

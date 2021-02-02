@@ -9,7 +9,7 @@ export const GET_ALL_PROJECTS = gql`
           title
           description
           creatorUserId
-          platform
+          platforms
           difficulty
           amountOfWork
           tags

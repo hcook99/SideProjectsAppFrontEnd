@@ -6,9 +6,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { UserTab } from './Styles';
 import Loading from './Loading';
 import ProjectList from './ProjectList';
-import {
-  GET_ALL_PROJECTS
-} from '../graphqlQueries/index';
+import { GET_ALL_PROJECTS } from '../graphqlQueries/index';
 import { useQuery } from '@apollo/client';
 
 function TabPanel(props) {
@@ -21,9 +19,7 @@ function TabPanel(props) {
       id={`simple-tabpanel-${index}`}
       aria-labelledby={`simple-tab-${index}`}
       {...other}>
-      {value === index && (
-          children
-      )}
+      {value === index && children}
     </div>
   );
 }
@@ -64,14 +60,14 @@ function UserPage() {
   const filterLiked = (value) => {
     return value.node.projectLikes.edges.some(
       (like) => like.node.userId === getUserIdentifier(user.sub)
-    )
-  }
+    );
+  };
 
   const filterBookmarked = (value) => {
     return value.node.projectBookmark.edges.some(
       (bookmark) => bookmark.node.userId === getUserIdentifier(user.sub)
-    )
-  }
+    );
+  };
 
   const { loading, error, data, refetch } = useQuery(GET_ALL_PROJECTS);
 
@@ -82,8 +78,8 @@ function UserPage() {
 
   return (
     <div>
-      <ProjectAppBar 
-        user={user} 
+      <ProjectAppBar
+        user={user}
         isAuthenticated={isAuthenticated}
         loginWithRedirect={loginWithRedirect}
         isUserPage={true}
@@ -94,49 +90,55 @@ function UserPage() {
         alignContent='center'
         justify='center'>
         <Grid xs={6} item>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              variant='fullWidth'
-              style={{ backgroundColor: 'white', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }}
-              TabIndicatorProps={{ style: { background: '#007AFE' } }}>
-              <UserTab label='CREATED' {...a11yProps(0)} />
-              <UserTab label='UPVOTED' {...a11yProps(1)} />
-              <UserTab label='BOOKMARKED' {...a11yProps(2)} />
-            </Tabs>
-            <TabPanel value={value} index={0}>
-              <ProjectList
-                projects={dataCleaned}
-                filterProject={filterSubmitted}
-                filterType="submitted"
-                userSub={user.sub}
-                isAuthenticated={isAuthenticated}
-                loginWithRedirect={() => loginWithRedirect()}
-                refetch={() => refetch()}
-              />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              <ProjectList
-                projects={dataCleaned}
-                filterProject={filterLiked}
-                filterType="upvoted"
-                userSub={user.sub}
-                isAuthenticated={isAuthenticated}
-                loginWithRedirect={() => loginWithRedirect()}
-                refetch={() => refetch()}
-              />
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-              <ProjectList
-                projects={dataCleaned}
-                filterProject={filterBookmarked}
-                filterType="bookmarked"
-                userSub={user.sub}
-                isAuthenticated={isAuthenticated}
-                loginWithRedirect={() => loginWithRedirect()}
-                refetch={() => refetch()}
-              />
-            </TabPanel>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            variant='fullWidth'
+            style={{
+              backgroundColor: 'white',
+              boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+            }}
+            TabIndicatorProps={{ style: { background: '#007AFE' } }}>
+            <UserTab label='CREATED' {...a11yProps(0)} />
+            <UserTab label='UPVOTED' {...a11yProps(1)} />
+            <UserTab label='BOOKMARKED' {...a11yProps(2)} />
+          </Tabs>
+          <TabPanel value={value} index={0}>
+            <ProjectList
+              projects={dataCleaned}
+              disableTags={true}
+              filterProject={filterSubmitted}
+              filterType='submitted'
+              userSub={user.sub}
+              isAuthenticated={isAuthenticated}
+              loginWithRedirect={() => loginWithRedirect()}
+              refetch={() => refetch()}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+            <ProjectList
+              projects={dataCleaned}
+              disableTags={true}
+              filterProject={filterLiked}
+              filterType='upvoted'
+              userSub={user.sub}
+              isAuthenticated={isAuthenticated}
+              loginWithRedirect={() => loginWithRedirect()}
+              refetch={() => refetch()}
+            />
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <ProjectList
+              projects={dataCleaned}
+              disableTags={true}
+              filterProject={filterBookmarked}
+              filterType='bookmarked'
+              userSub={user.sub}
+              isAuthenticated={isAuthenticated}
+              loginWithRedirect={() => loginWithRedirect()}
+              refetch={() => refetch()}
+            />
+          </TabPanel>
         </Grid>
       </Grid>
     </div>

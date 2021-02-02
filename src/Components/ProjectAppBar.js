@@ -9,6 +9,9 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
+  GridList,
+  FormControlLabel,
+  GridListTile,
 } from '@material-ui/core';
 import {
   ProjectTextField,
@@ -17,9 +20,14 @@ import {
   SaveButton,
   CancelButton,
   TagToolTip,
+  FilterStyleTypography,
+  PlatformsCreate,
+  PlatformCreateCheckbox
 } from './Styles';
 import logo from '../ideas.svg';
 import AddIcon from '@material-ui/icons/Add';
+import CheckBoxOutlineBlankSharp from '@material-ui/icons/CheckBoxOutlineBlankSharp';
+import CheckBoxSharp from '@material-ui/icons/CheckBoxSharp';
 import LoginButton from './LoginButton';
 import UserIconMenu from './UserIconMenu';
 import ProjectSelect from './ProjectSelect';
@@ -35,9 +43,27 @@ function ProjectAppBar(props) {
   const [tags, setTags] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [difficulty, setDifficulty] = React.useState('');
-  const [platform, setPlatform] = React.useState('');
+  const [platforms, setPlatforms] = React.useState([]);
   const [amountOfWork, setAmountOfWork] = React.useState('');
   const [createProject] = useMutation(CREATE_PROJECT);
+  const listOfPlatforms = [
+    'Mobile',
+    'Frontend',
+    'Backend',
+    'Embedded',
+    'Desktop',
+    'Blockchain',
+    'AI/ML',
+    'Tooling',
+    'AR/VR',
+    'Bots',
+    'Design/UX',
+    'Other',
+  ];
+
+  if(props.parentSearch!==search){
+    setSearch(props.parentSearch);
+  }
 
   const getUserIdentifier = (userSub) => {
     if (userSub) {
@@ -74,7 +100,7 @@ function ProjectAppBar(props) {
   const handleOpen = async () => {
     if (!props.isAuthenticated) {
       await props.loginWithRedirect();
-    }else{
+    } else {
       setOpen(true);
     }
   };
@@ -84,7 +110,7 @@ function ProjectAppBar(props) {
     setTitle('');
     setDescription('');
     setDifficulty('');
-    setPlatform('');
+    setPlatforms([]);
     setAmountOfWork('');
     setTags('');
   };
@@ -92,7 +118,7 @@ function ProjectAppBar(props) {
   const handleSave = async () => {
     if (!props.isAuthenticated) {
       await props.loginWithRedirect();
-    }else{
+    } else {
       let arrayOfTags = tags.split(',');
       const userId = getUserIdentifier(props.user.sub);
       arrayOfTags = arrayOfTags.map((tag) => tag.trim());
@@ -103,7 +129,7 @@ function ProjectAppBar(props) {
           description,
           creatorUserId: userId,
           difficulty,
-          platform,
+          platforms,
           amountOfWork,
           tags: arrayOfTags,
         },
@@ -113,13 +139,21 @@ function ProjectAppBar(props) {
     }
   };
 
+  const handleFilterClick = (event) => {
+    const value = event.target.name;
+    let tempPlatforms = [...platforms];
+    if (platforms.includes(value)) {
+      tempPlatforms.splice(platforms.indexOf(value), 1);
+    } else {
+      tempPlatforms.push(value);
+    }
+    setPlatforms(tempPlatforms);
+  };
+
   const changeSelect = (label, value) => {
     switch (label) {
       case 'Difficulty':
         setDifficulty(value);
-        break;
-      case 'Platform':
-        setPlatform(value);
         break;
       case 'Amount of Work':
         setAmountOfWork(value);
@@ -160,7 +194,7 @@ function ProjectAppBar(props) {
                   color: 'black',
                   fontFamily: 'Montserrat',
                   fontWeight: 'bolder',
-                  fontSize: '1.25rem'
+                  fontSize: '1.25rem',
                 }}>
                 Side
                 <br />
@@ -173,7 +207,7 @@ function ProjectAppBar(props) {
                   width: '65vh',
                   marginLeft: '2em',
                   border: '3px',
-                  visibility: props.isUserPage ? 'hidden' : null
+                  visibility: props.isUserPage ? 'hidden' : null,
                 }}
                 name='search'
                 variant='outlined'
@@ -194,7 +228,9 @@ function ProjectAppBar(props) {
               justify='flex-end'
               direction='row'
               xs={3}>
-              <CreateButton onClick={handleOpen} style={{ visibility: props.isUserPage ? 'hidden' : null }}>
+              <CreateButton
+                onClick={handleOpen}
+                style={{ visibility: props.isUserPage ? 'hidden' : null }}>
                 <AddIcon />
                 Create a project
               </CreateButton>
@@ -246,33 +282,52 @@ function ProjectAppBar(props) {
                     }}
                     rows={2}
                   />
-                  <ProjectSelect
-                    label='Difficulty'
-                    listOfValues={['Beginner', 'Intermidiate', 'Advanced']}
-                    handleChange={changeSelect}
-                  />
-                  <ProjectSelect
-                    label='Platform'
-                    listOfValues={[
-                      'Mobile',
-                      'Frontend',
-                      'Backend',
-                      'Embedded',
-                      'Desktop',
-                      'Blockchain',
-                      'AI/ML',
-                      'Developer Tooling',
-                      'AR/VR',
-                      'Bots',
-                      'Other'
-                    ]}
-                    handleChange={changeSelect}
-                  />
-                  <ProjectSelect
-                    label='Amount of Work'
-                    listOfValues={['Little Work', 'Medium Work', 'Much Work']}
-                    handleChange={changeSelect}
-                  />
+                  <Grid container item direction='row'>
+                    <ProjectSelect
+                      label='Difficulty'
+                      listOfValues={['Beginner', 'Intermidiate', 'Advanced']}
+                      handleChange={changeSelect}
+                    />
+                    <ProjectSelect
+                      label='Amount of Work'
+                      listOfValues={['Little Work', 'Medium Work', 'Much Work']}
+                      handleChange={changeSelect}
+                    />
+                  </Grid>
+                  <GridList
+                    cols={4}
+                    style={{ margin: 0, border: '2px solid #007afe', borderRadius: '4px', marginLeft: '0.5rem', width: '92.5%' }}
+                    spacing={1}
+                    cellHeight={60}
+                    justify="flex-start">
+                    <GridListTile cols={4}><PlatformsCreate>Platforms</PlatformsCreate></GridListTile>
+                    {listOfPlatforms.map((checkBoxValue, i) => {
+                      return (
+                        <GridListTile key={i} cols={1} style={{display: "flex", justifyContent: "center", alignItems: 'center', flexDirection: 'column'}}>
+                          <FormControlLabel
+                            control={
+                              <PlatformCreateCheckbox
+                                name={checkBoxValue}
+                                size='small'
+                                color='primary'
+                                disableRipple={true}
+                                icon={<CheckBoxOutlineBlankSharp />}
+                                checkedIcon={<CheckBoxSharp />}
+                                onClick={handleFilterClick}
+                              />
+                            }
+                            label={
+                              <FilterStyleTypography
+                                style={{ fontSize: '0.8em' }}>
+                                {checkBoxValue}
+                              </FilterStyleTypography>
+                            }
+                            labelPlacement='top'
+                          />
+                        </GridListTile>
+                      );
+                    })}
+                  </GridList>
                 </DialogContent>
                 <DialogActions>
                   <CancelButton

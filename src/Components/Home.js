@@ -169,7 +169,7 @@ function Home() {
                 'Desktop',
                 'Blockchain',
                 'AI/ML',
-                'Developer Tooling',
+                'Tooling',
                 'AR/VR',
                 'Bots',
                 'Other',

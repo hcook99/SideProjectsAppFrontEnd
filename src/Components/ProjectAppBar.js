@@ -285,7 +285,7 @@ function ProjectAppBar(props) {
                   <Grid container item direction='row'>
                     <ProjectSelect
                       label='Difficulty'
-                      listOfValues={['Beginner', 'Intermidiate', 'Advanced']}
+                      listOfValues={['Beginner', 'Intermediate', 'Advanced']}
                       handleChange={changeSelect}
                     />
                     <ProjectSelect

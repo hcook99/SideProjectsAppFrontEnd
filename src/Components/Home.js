@@ -178,7 +178,7 @@ function Home() {
               changeSelection={changeSelectors}
             />
             <ListOfCheckBoxes
-              listOfCheckBoxLabel={['Beginner', 'Intermidiate', 'Advanced']}
+              listOfCheckBoxLabel={['Beginner', 'Intermediate', 'Advanced']}
               categoryTitle='Difficulty'
               changeSelection={changeSelectors}
             />

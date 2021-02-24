@@ -8,7 +8,7 @@ export const CREATE_PROJECT = gql`
     $platforms: [String!]!
     $difficulty: String!
     $amountOfWork: String!
-    $tags: [String!]!
+    $tags: String!
   ) {
     createProject(
       title: $title

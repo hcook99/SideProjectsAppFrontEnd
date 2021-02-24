@@ -9,8 +9,13 @@ import {
   List,
   Paper,
 } from '@material-ui/core';
-import { UPDATE_LIKE, UPDATE_BOOKMARK } from '../graphqlQueries/index';
-import { useMutation } from '@apollo/client';
+import {
+  UPDATE_LIKE,
+  UPDATE_BOOKMARK,
+  GET_ALL_PROJECTS,
+} from '../graphqlQueries/index';
+import { useMutation, useQuery } from '@apollo/client';
+import Loading from './Loading';
 import {
   UpVoteButton,
   ProjectsTitleText,
@@ -18,7 +23,8 @@ import {
   BookmarkButton,
   ProjectsDescriptionText,
   BuiltinTags,
-  Tag
+  Tag,
+  PageCursor,
 } from './Styles';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
@@ -30,11 +36,63 @@ import gfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 function ProjectList(props) {
-  const [openDescription, setOpenDescription] = React.useState(
-    new Array(props.projects.length).fill(false)
-  );
   const [addLike] = useMutation(UPDATE_LIKE);
   const [addBookmark] = useMutation(UPDATE_BOOKMARK);
+  const [openDescription, setOpenDescription] = React.useState([]);
+  const [cursor, setCursor] = React.useState(['']);
+
+  const flattenObjectToArray = (objectToConvert) => {
+    return Object.entries(objectToConvert).filter(([key, value])=>{
+      return value
+    }).flat().filter(value => {
+      return typeof value == 'string'
+    });
+  }
+
+  let platformFlattened = flattenObjectToArray(props.platforms)
+  let difficultiesFlattened = flattenObjectToArray(props.difficulties);
+  let amountOfWorkFlattened = flattenObjectToArray(props.amountOfWork);
+
+  console.log(props.search);
+
+  const varsForSearch = {
+    title: props.tags ? '%%' : `%${props.search}%`,
+    description: props.tags ? '%%' : `%${props.search}%`,
+    tags: `%${props.search}%`,
+    platforms: platformFlattened,
+    limit: 10,
+    after: cursor[cursor.length - 1],
+  };
+
+  if (difficultiesFlattened.length > 0) {
+    varsForSearch['difficulties'] = difficultiesFlattened;
+  }
+  if (amountOfWorkFlattened.length > 0) {
+    varsForSearch['amountOfWork'] = amountOfWorkFlattened;
+  }
+
+  const { loading, error, data, refetch } = useQuery(GET_ALL_PROJECTS, {
+    variables: varsForSearch,
+    onCompleted: (data) => {
+      const tempArr = new Array(data.allProjects.edges.length).fill(false);
+      setOpenDescription(tempArr);
+    },
+  });
+
+  if (loading)
+    return (
+      <Grid
+        alignItems='flex-start'
+        justify='center'
+        alignContent='flex-start'
+        container
+        style={{ width: '100%' }}>
+        <Loading />
+      </Grid>
+    );
+  if (error) return <p>Error {console.log(error)}</p>;
+
+  let projects = data.allProjects.edges;
 
   const renderers = {
     code: ({ language, value }) => {
@@ -59,11 +117,15 @@ function ProjectList(props) {
   const titleCase = (title) => {
     title = title.toLowerCase();
     return title.charAt(0).toUpperCase() + title.slice(1);
-  }
+  };
 
   const clickTag = (tag) => {
     props.searchTag(tag);
-  }
+  };
+
+  const clickBuiltInTag = (name, category) => {
+    props.clickBuiltInTag(name, category);
+  };
 
   const saveLike = async (projectId) => {
     if (!props.isAuthenticated) {
@@ -75,7 +137,7 @@ function ProjectList(props) {
       } catch (err) {
         console.log(err);
       }
-      props.refetch();
+      refetch();
     }
   };
 
@@ -89,7 +151,7 @@ function ProjectList(props) {
       } catch (err) {
         console.log(err);
       }
-      props.refetch();
+      refetch();
     }
   };
 
@@ -97,6 +159,20 @@ function ProjectList(props) {
     return projectBookmark.edges.some(
       (bookmark) => bookmark.node.userId === getUserIdentifier(userSub)
     );
+  };
+
+  const nextPage = () => {
+    let temp = [...cursor];
+    temp.push(data.allProjects.pageInfo.endCursor);
+    setCursor(temp);
+    window.scrollTo(0, 0);
+  };
+
+  const previousPage = () => {
+    let temp = [...cursor];
+    temp.pop();
+    setCursor(temp);
+    window.scrollTo(0, 0);
   };
 
   let imageToSetForMissing;
@@ -109,7 +185,7 @@ function ProjectList(props) {
     imageToSetForMissing = created;
   }
 
-  if (props.projects.filter(props.filterProject).length === 0) {
+  if (projects.length === 0) {
     return (
       <Paper elevation={3}>
         <Grid
@@ -117,7 +193,7 @@ function ProjectList(props) {
           alignItems='center'
           justify='center'
           direction='column'
-          style={{ backgroundColor: 'white', height: '55vh' }}>
+          style={{ backgroundColor: 'white', height: '55vh', width: '50vw' }}>
           <Grid item>
             <br />
             <img
@@ -143,8 +219,13 @@ function ProjectList(props) {
   }
 
   return (
-    <List style={{ padding: '0', backgroundColor: 'transparent' }}>
-      {props.projects.filter(props.filterProject).map((project, i) => (
+    <List
+      style={{
+        padding: '0',
+        backgroundColor: 'transparent',
+        maxWidth: '45vw',
+      }}>
+      {projects.map((project, i) => (
         <ListItem
           style={{
             backgroundColor: 'white',
@@ -198,7 +279,7 @@ function ProjectList(props) {
             </UpVoteButton>
           </ListItemIcon>
           <ListItemText
-            style={{marginLeft: '0.3rem'}}
+            style={{ marginLeft: '0.3rem' }}
             disableTypography={true}
             primary={
               <ProjectsTitleText>{project.node.title}</ProjectsTitleText>
@@ -207,47 +288,93 @@ function ProjectList(props) {
               <React.Fragment>
                 <Grid container direction='column'>
                   <Grid container direction='row'>
-                  <BookmarkButton
-                    isBookmarked={checkIfBookmarked(
-                      project.node.projectBookmark,
-                      props.userSub
-                    )}
-                    disableRipple={true}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      saveBookmark(project.node.id);
-                    }}>
-                    <BookmarkIcon
-                      style={{
-                        fontSize: '1.2rem',
-                      }}
-                    />
-                    <BookmarkText>
-                      {checkIfBookmarked(
+                    <BookmarkButton
+                      isBookmarked={checkIfBookmarked(
                         project.node.projectBookmark,
                         props.userSub
-                      )
-                        ? 'Bookmarked'
-                        : 'Bookmark'}
-                    </BookmarkText>
-                  </BookmarkButton>
-                  {project.node.platforms.map((platform, i)=>{
-                    return <BuiltinTags key={i}>{platform}</BuiltinTags>
-                  })}
-                    <BuiltinTags>{titleCase(project.node.difficulty)}</BuiltinTags>
-                    <BuiltinTags>{titleCase(project.node.amountOfWork)} Work</BuiltinTags>
-                  </Grid>
-                  <Grid container direction='row' style={{marginLeft: '0.7rem'}}>
-                    {project.node.tags.map((tag, i) => {
-                      return <Tag key={i} disableRipple={true} disabled={props.disableTags}
+                      )}
+                      disableRipple={true}
                       onClick={(event) => {
                         event.stopPropagation();
-                        clickTag(tag);
-                      }}><i>#</i>{tag}</Tag>
+                        saveBookmark(project.node.id);
+                      }}>
+                      <BookmarkIcon
+                        style={{
+                          fontSize: '1.2rem',
+                        }}
+                      />
+                      <BookmarkText>
+                        {checkIfBookmarked(
+                          project.node.projectBookmark,
+                          props.userSub
+                        )
+                          ? 'Bookmarked'
+                          : 'Bookmark'}
+                      </BookmarkText>
+                    </BookmarkButton>
+                    <Grid container item direction='row' zeroMinWidth>
+                      {project.node.platforms.map((platform, i) => {
+                        return (
+                          <BuiltinTags
+                            key={i}
+                            disableRipple={true}
+                            disabled={props.disableTags}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              clickBuiltInTag(platform, 'Platform');
+                            }}>
+                            {platform}
+                          </BuiltinTags>
+                        );
+                      })}
+                      <BuiltinTags
+                        disableRipple={true}
+                        disabled={props.disableTags}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          clickBuiltInTag(
+                            project.node.difficulty,
+                            'Difficulty'
+                          );
+                        }}>
+                        {titleCase(project.node.difficulty)}
+                      </BuiltinTags>
+                      <BuiltinTags
+                        disableRipple={true}
+                        disabled={props.disableTags}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          clickBuiltInTag(
+                            project.node.amountOfWork,
+                            'Amount Of Work'
+                          );
+                        }}>
+                        {titleCase(project.node.amountOfWork)} Work
+                      </BuiltinTags>
+                    </Grid>
+                  </Grid>
+                  <Grid
+                    container
+                    direction='row'
+                    style={{ marginLeft: '0.7rem' }}>
+                    {project.node.tags.split(',').map((tag, i) => {
+                      return (
+                        <Tag
+                          key={i}
+                          disableRipple={true}
+                          disabled={props.disableTags}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            clickTag(tag);
+                          }}>
+                          <i>#</i>
+                          {tag.trim()}
+                        </Tag>
+                      );
                     })}
                   </Grid>
                 </Grid>
-                <br/>
+                <br />
                 <Collapse in={openDescription[i]}>
                   <ProjectsDescriptionText component='div'>
                     <ReactMarkdown
@@ -262,6 +389,21 @@ function ProjectList(props) {
           />
         </ListItem>
       ))}
+      <ListItem>
+        <Grid
+          container
+          item
+          direction='row'
+          alignItems='center'
+          justify='center'>
+          {cursor.length > 1 ? (
+            <PageCursor onClick={previousPage}>{'<'} Previous Page</PageCursor>
+          ) : null}
+          {data.allProjects.pageInfo.hasNextPage ? (
+            <PageCursor onClick={nextPage}>Next Page {'>'}</PageCursor>
+          ) : null}
+        </Grid>
+      </ListItem>
       <br />
     </List>
   );

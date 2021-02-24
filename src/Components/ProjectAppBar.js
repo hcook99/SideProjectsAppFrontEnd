@@ -22,7 +22,7 @@ import {
   TagToolTip,
   FilterStyleTypography,
   PlatformsCreate,
-  PlatformCreateCheckbox
+  PlatformCreateCheckbox,
 } from './Styles';
 import logo from '../ideas.svg';
 import AddIcon from '@material-ui/icons/Add';
@@ -61,7 +61,7 @@ function ProjectAppBar(props) {
     'Other',
   ];
 
-  if(props.parentSearch!==search){
+  if (props.parentSearch !== search) {
     setSearch(props.parentSearch);
   }
 
@@ -119,10 +119,7 @@ function ProjectAppBar(props) {
     if (!props.isAuthenticated) {
       await props.loginWithRedirect();
     } else {
-      let arrayOfTags = tags.split(',');
       const userId = getUserIdentifier(props.user.sub);
-      arrayOfTags = arrayOfTags.map((tag) => tag.trim());
-      arrayOfTags = arrayOfTags.filter((tag) => tag.length > 0);
       await createProject({
         variables: {
           title,
@@ -131,7 +128,7 @@ function ProjectAppBar(props) {
           difficulty,
           platforms,
           amountOfWork,
-          tags: arrayOfTags,
+          tags,
         },
       });
       handleClose();
@@ -296,14 +293,30 @@ function ProjectAppBar(props) {
                   </Grid>
                   <GridList
                     cols={4}
-                    style={{ margin: 0, border: '2px solid #007afe', borderRadius: '4px', marginLeft: '0.5rem', width: '92.5%' }}
+                    style={{
+                      margin: 0,
+                      border: '2px solid #007afe',
+                      borderRadius: '4px',
+                      marginLeft: '0.5rem',
+                      width: '92.5%',
+                    }}
                     spacing={1}
                     cellHeight={60}
-                    justify="flex-start">
-                    <GridListTile cols={4}><PlatformsCreate>Platforms</PlatformsCreate></GridListTile>
+                    justify='flex-start'>
+                    <GridListTile cols={4}>
+                      <PlatformsCreate>Platforms</PlatformsCreate>
+                    </GridListTile>
                     {listOfPlatforms.map((checkBoxValue, i) => {
                       return (
-                        <GridListTile key={i} cols={1} style={{display: "flex", justifyContent: "center", alignItems: 'center', flexDirection: 'column'}}>
+                        <GridListTile
+                          key={i}
+                          cols={1}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'column',
+                          }}>
                           <FormControlLabel
                             control={
                               <PlatformCreateCheckbox

@@ -200,7 +200,7 @@ export const PlatformsCreate = styled(Typography)`
   color: black;
   font-weight: bold;
   margin-left: 0.5rem;
-`
+`;
 
 export const PlatformCreateCheckbox = styled(Checkbox)`
   color: #b1d6ff;
@@ -217,18 +217,26 @@ export const PlatformCreateCheckbox = styled(Checkbox)`
   }
 `;
 
-export const BuiltinTags = styled(Typography)`
+export const BuiltinTags = styled(Button)`
   font-family: Montserrat;
   font-weight: 700;
   font-size: 0.7rem;
   color: #007afe;
-  background-color: #EEF4F9;
+  background-color: #eef4f9;
   border: none;
   text-transform: none;
   margin: 3px;
+  width: auto;
   padding: 4px;
   border-radius: 5px;
-`
+  &:hover {
+    cursor: pointer;
+  }
+  &:disabled {
+    color: #007afe;
+    background-color: #eef4f9;
+  }
+`;
 
 export const Tag = styled(Button)`
   font-family: Montserrat;
@@ -256,4 +264,14 @@ export const Tag = styled(Button)`
       color: #c6cbcf;
     }
   }
-`
+`;
+
+export const PageCursor = styled(Button)`
+  font-family: Montserrat;
+  font-weight: bolder;
+  font-size: 1rem;
+  border-radius: 0.3rem;
+  background-color: white;
+  margin-right: 0.4rem;
+  color: #383838;
+`;

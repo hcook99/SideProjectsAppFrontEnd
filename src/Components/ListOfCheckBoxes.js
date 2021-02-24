@@ -17,21 +17,19 @@ function ListOfCheckBoxes(props) {
   };
 
   const handleFilterClick = (event) => {
-    props.changeSelection(
-      event.target.name,
-      event.target.checked,
-      props.categoryTitle
-    );
+    props.changeSelection(event.target.name, props.categoryTitle);
   };
 
   let listOfCheckBoxTemp = [];
-  for (const [i, checkBoxValue] of props.listOfCheckBoxLabel.entries()) {
+  let i = 0;
+  for (const [key, value] of Object.entries(props.listOfCheckBoxLabel)) {
     listOfCheckBoxTemp.push(
       <ListItemCheckbox key={i}>
         <FormControlLabel
           control={
             <FilterCheckbox
-              name={checkBoxValue}
+              name={key}
+              value={value}
               size='small'
               color='primary'
               disableRipple={true}
@@ -42,12 +40,13 @@ function ListOfCheckBoxes(props) {
           }
           label={
             <FilterStyleTypography style={{ fontSize: '0.8em' }}>
-              {checkBoxValue}
+              {key}
             </FilterStyleTypography>
           }
         />
       </ListItemCheckbox>
     );
+    i++;
   }
 
   return (

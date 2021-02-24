@@ -6,8 +6,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { UserTab } from './Styles';
 import Loading from './Loading';
 import ProjectList from './ProjectList';
-import { GET_ALL_PROJECTS } from '../graphqlQueries/index';
-import { useQuery } from '@apollo/client';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -69,12 +67,7 @@ function UserPage() {
     );
   };
 
-  const { loading, error, data, refetch } = useQuery(GET_ALL_PROJECTS);
-
-  if (loading || isLoading) return <Loading />;
-  if (error) return <p>Error {console.log(error)}</p>;
-
-  let dataCleaned = data.allProjects.edges;
+  if (isLoading) return <Loading />;
 
   return (
     <div>
@@ -105,38 +98,32 @@ function UserPage() {
           </Tabs>
           <TabPanel value={value} index={0}>
             <ProjectList
-              projects={dataCleaned}
               disableTags={true}
               filterProject={filterSubmitted}
               filterType='submitted'
               userSub={user.sub}
               isAuthenticated={isAuthenticated}
               loginWithRedirect={() => loginWithRedirect()}
-              refetch={() => refetch()}
             />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <ProjectList
-              projects={dataCleaned}
               disableTags={true}
               filterProject={filterLiked}
               filterType='upvoted'
               userSub={user.sub}
               isAuthenticated={isAuthenticated}
               loginWithRedirect={() => loginWithRedirect()}
-              refetch={() => refetch()}
             />
           </TabPanel>
           <TabPanel value={value} index={2}>
             <ProjectList
-              projects={dataCleaned}
               disableTags={true}
               filterProject={filterBookmarked}
               filterType='bookmarked'
               userSub={user.sub}
               isAuthenticated={isAuthenticated}
               loginWithRedirect={() => loginWithRedirect()}
-              refetch={() => refetch()}
             />
           </TabPanel>
         </Grid>

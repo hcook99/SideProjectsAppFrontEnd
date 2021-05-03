@@ -280,7 +280,7 @@ function ProjectAppBar(props) {
                     Create Project
                   </CreateProjectTitle>
                   <DialogContent
-                    style={{ marginLeft: window.isMobile ? '0' : '1rem', marginRight: window.isMobile ? '0' : '4rem' }}>
+                    style={{ marginLeft: window.isMobile ? '0' : '1rem', marginRight: window.isMobile ? '0' : '1rem' }}>
                     <ProjectTextField
                       id='title'
                       label='Name'
@@ -336,7 +336,7 @@ function ProjectAppBar(props) {
                       spacing={1}
                       cellHeight={60}
                       justify='flex-start'
-                      style={{margin: 0}}>
+                      style={{margin: '0.5rem'}}>
                       <GridListTile cols={3} style={{height: 40}}>
                         <PlatformsCreate>Platforms</PlatformsCreate>
                       </GridListTile>

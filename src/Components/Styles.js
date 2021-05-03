@@ -319,7 +319,5 @@ export const PlatformGridList = styled(GridList)`
   border: 2px solid #007afe;
   border-radius: 4px;
   overflow-y: revert;
-  & .MuiGridList-root {
-    overflow-y: none;
-  }
+  margin: 0.5rem;
 `

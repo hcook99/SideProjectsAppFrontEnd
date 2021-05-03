@@ -59,15 +59,17 @@ function ListOfCheckBoxes(props) {
         </FilterStyleTypography>
       </ListItem>
       {window.isMobile ? listOfCheckBoxTemp : 
-        (listOfCheckBoxTemp.slice(0, 3),
-        listOfCheckBoxTemp.length < 4 ? null : (
-          <div>
-            <Collapse in={showMore}>{listOfCheckBoxTemp.slice(3)}</Collapse>
-            <ShowMoreButton onClick={handleShowMore} disableRipple={true}>
-              Show {showMore ? 'less' : 'more'}...
-            </ShowMoreButton>
+        <div>
+          {listOfCheckBoxTemp.slice(0, 3)}
+          {listOfCheckBoxTemp.length < 4 ? null : (
+            <div>
+              <Collapse in={showMore}>{listOfCheckBoxTemp.slice(3)}</Collapse>
+              <ShowMoreButton onClick={handleShowMore} disableRipple={true}>
+                Show {showMore ? 'less' : 'more'}...
+              </ShowMoreButton>
           </div>
-        ))
+        )}
+        </div>
       }
     </div>
   );

@@ -49,18 +49,28 @@ function ProjectList(props) {
     });
   }
 
-  let platformFlattened = flattenObjectToArray(props.platforms)
-  let difficultiesFlattened = flattenObjectToArray(props.difficulties);
-  let amountOfWorkFlattened = flattenObjectToArray(props.amountOfWork);
+  const getUserIdentifier = (userSub) => {
+    if (userSub) {
+      const capturingRegex = /^.*\|(?<identifier>.+)$/;
+      const found = userSub.match(capturingRegex);
+      return found.groups.identifier;
+    }
+  };
 
-  console.log(props.search);
+
+  let platformFlattened = props.platforms ? flattenObjectToArray(props.platforms) : [];
+  let difficultiesFlattened = props.difficulties ? flattenObjectToArray(props.difficulties) : '';
+  let amountOfWorkFlattened = props.amountOfWork ? flattenObjectToArray(props.amountOfWork) : '';
 
   const varsForSearch = {
     title: props.tags ? '%%' : `%${props.search}%`,
     description: props.tags ? '%%' : `%${props.search}%`,
     tags: `%${props.search}%`,
     platforms: platformFlattened,
-    limit: 10,
+    creatorUserId: props.filterType === 'submitted' ? getUserIdentifier(props.userSub) : '',
+    likeUserId: props.filterType === 'upvoted' ? getUserIdentifier(props.userSub) : '',
+    bookmarkUserId: props.filterType === 'bookmarked' ? getUserIdentifier(props.userSub) : '',
+    limit: props.filterType ? 100 : 10,
     after: cursor[cursor.length - 1],
   };
 
@@ -104,14 +114,6 @@ function ProjectList(props) {
     const temp = [...openDescription];
     temp[i] = !temp[i];
     setOpenDescription(temp);
-  };
-
-  const getUserIdentifier = (userSub) => {
-    if (userSub) {
-      const capturingRegex = /^.*\|(?<identifier>.+)$/;
-      const found = userSub.match(capturingRegex);
-      return found.groups.identifier;
-    }
   };
 
   const titleCase = (title) => {
@@ -187,13 +189,13 @@ function ProjectList(props) {
 
   if (projects.length === 0) {
     return (
-      <Paper elevation={3}>
+      <Paper elevation={3} style={{width: '100%'}}>
         <Grid
           container
           alignItems='center'
           justify='center'
           direction='column'
-          style={{ backgroundColor: 'white', height: '55vh', width: '50vw' }}>
+          style={{ backgroundColor: 'white', height: '55vh', width: '100%' }}>
           <Grid item>
             <br />
             <img
@@ -223,7 +225,7 @@ function ProjectList(props) {
       style={{
         padding: '0',
         backgroundColor: 'transparent',
-        maxWidth: '45vw',
+        width: '100%',
       }}>
       {projects.map((project, i) => (
         <ListItem
@@ -358,19 +360,24 @@ function ProjectList(props) {
                     direction='row'
                     style={{ marginLeft: '0.7rem' }}>
                     {project.node.tags.split(',').map((tag, i) => {
-                      return (
-                        <Tag
-                          key={i}
-                          disableRipple={true}
-                          disabled={props.disableTags}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            clickTag(tag);
-                          }}>
-                          <i>#</i>
-                          {tag.trim()}
-                        </Tag>
-                      );
+                      if(tag!==''){
+                        return (
+                          <Tag
+                            key={i}
+                            disableRipple={true}
+                            disabled={props.disableTags}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              clickTag(tag);
+                            }}>
+                            <i>#</i>
+                            {tag.trim()}
+                          </Tag>
+                        );
+                      }
+                      else {
+                        return <></>
+                      }
                     })}
                   </Grid>
                 </Grid>

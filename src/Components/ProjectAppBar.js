@@ -9,9 +9,9 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
-  GridList,
   FormControlLabel,
   GridListTile,
+  InputAdornment
 } from '@material-ui/core';
 import {
   ProjectTextField,
@@ -23,11 +23,14 @@ import {
   FilterStyleTypography,
   PlatformsCreate,
   PlatformCreateCheckbox,
+  SearchButton,
+  PlatformGridList
 } from './Styles';
 import logo from '../ideas.svg';
 import AddIcon from '@material-ui/icons/Add';
 import CheckBoxOutlineBlankSharp from '@material-ui/icons/CheckBoxOutlineBlankSharp';
 import CheckBoxSharp from '@material-ui/icons/CheckBoxSharp';
+import SearchIcon from '@material-ui/icons/Search';
 import LoginButton from './LoginButton';
 import UserIconMenu from './UserIconMenu';
 import ProjectSelect from './ProjectSelect';
@@ -60,6 +63,7 @@ function ProjectAppBar(props) {
     'Design/UX',
     'Other',
   ];
+  const [openSearch, setOpenSearch] = React.useState(false);
 
   if (props.parentSearch !== search) {
     setSearch(props.parentSearch);
@@ -86,6 +90,10 @@ function ProjectAppBar(props) {
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   };
+
+  const openSearchChange = (event) => {
+    setOpenSearch(!openSearch)
+  }
 
   const handleTagChange = (event) => {
     if (
@@ -132,8 +140,12 @@ function ProjectAppBar(props) {
         },
       });
       handleClose();
-      props.handleCreateProject();
+      handleCreate();
     }
+  };
+
+  const handleCreate = () => {
+    window.location.reload();
   };
 
   const handleFilterClick = (event) => {
@@ -168,41 +180,222 @@ function ProjectAppBar(props) {
     <div>
       <AppBar
         position='static'
-        style={{ backgroundColor: 'white', boxShadow: '0.2px' }}>
-        <Toolbar>
-          <Grid container>
-            <Grid
-              container
-              item
-              xs={9}
-              direction='row'
-              alignItems='center'
-              onClick={goToHomePage}>
-              <Icon style={{ fontSize: '2.5em' }}>
-                <img
-                  src={logo}
-                  style={{ width: '100%', height: '100%' }}
-                  alt={'Logo'}
-                />
-              </Icon>
-              <Typography
-                style={{
-                  marginLeft: '1.0rem',
-                  color: 'black',
-                  fontFamily: 'Montserrat',
-                  fontWeight: 'bolder',
-                  fontSize: '1.25rem',
-                }}>
-                Side
-                <br />
-                Projects
-              </Typography>
+        style={{ backgroundColor: 'white', boxShadow: '0.2px'}}>
+        <Toolbar style={{ minHeight: 0 }}>
+          <Grid container direction='column'>
+            <Grid container item alignContent='center' style={{ minHeight: 0, height: '100%', padding: '1px' }}>
+              <Grid
+                container
+                item
+                xs={7}
+                direction='row'
+                alignItems='center'
+                onClick={goToHomePage}
+                style={{ minHeight: 0, height: '100%' }}>
+                <Icon style={{ height: '80%' }}>
+                  <img
+                    src={logo}
+                    style={{ width: '100%', height: '100%' }}
+                    alt={'Logo'}
+                  />
+                </Icon>
+                <Typography
+                  style={{
+                    marginLeft: '1.0rem',
+                    color: 'black',
+                    fontFamily: 'Montserrat',
+                    fontWeight: 'bolder',
+                    fontSize: '1.25rem',
+                  }}>
+                  SiPro
+                </Typography>
+                <Grid
+                item
+                xs={7}
+                style={{ minHeight: 0, height: '100%' }}>
+                  { window.isMobile ? <></> :
+                    <ProjectTextField
+                      id='standard-basic'
+                      placeholder='Search for Projects'
+                      style={{
+                        marginLeft: '1em',
+                        border: '3px',
+                        visibility: props.isUserPage ? 'hidden' : null,
+                      }}
+                      name='search'
+                      variant='outlined'
+                      value={search}
+                      onChange={changeHandler}
+                      inputProps={{
+                        style: {
+                          paddingTop: '4px',
+                          paddingBottom: '4px',
+                        },
+                      }}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon style={{color: '#007afe'}}/>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  }
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                item
+                alignItems='center'
+                justify='flex-end'
+                direction='row'
+                xs={5}
+                style={{ minHeight: 0 }}>
+                { window.isMobile ? 
+                  <SearchButton onClick={openSearchChange}>
+                    <SearchIcon/>
+                  </SearchButton> :
+                  <CreateButton
+                    onClick={handleOpen}
+                    style={{ marginRight: '1rem' }}>
+                    <AddIcon className="add-icon"/>
+                    Create a project
+                  </CreateButton>
+                }
+                {props.user ? (
+                  <UserIconMenu
+                    username={props.user.nickname}
+                    userPicture={props.user.picture}
+                    openDialog={handleOpen}
+                  />
+                ) : (
+                  <LoginButton />
+                )}
+                <Dialog
+                  open={open}
+                  onClose={handleClose}
+                  fullWidth={true}
+                  maxWidth='sm'>
+                  <CreateProjectTitle disableTypography={true}>
+                    Create Project
+                  </CreateProjectTitle>
+                  <DialogContent
+                    style={{ marginLeft: window.isMobile ? '0' : '1rem', marginRight: window.isMobile ? '0' : '4rem' }}>
+                    <ProjectTextField
+                      id='title'
+                      label='Name'
+                      type='text'
+                      variant='outlined'
+                      value={title}
+                      onChange={handleTitleChange}
+                      style={{ marginTop: 0 }}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                    <TagToolTip title='Use , to seperate tags.' arrow>
+                      <ProjectTextField
+                        id='tags'
+                        label='Tags'
+                        type='text'
+                        variant='outlined'
+                        value={tags}
+                        onChange={handleTagChange}
+                        InputLabelProps={{
+                          shrink: true,
+                        }}
+                      />
+                    </TagToolTip>
+                    <ProjectTextField
+                      id='description'
+                      label='Description'
+                      type='text'
+                      variant='outlined'
+                      value={description}
+                      onChange={handleDescriptionChange}
+                      multiline={true}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                      rows={2}
+                    />
+                    <Grid container item direction='row'>
+                      <ProjectSelect
+                        label='Difficulty'
+                        listOfValues={['Beginner', 'Intermediate', 'Advanced']}
+                        handleChange={changeSelect}
+                      />
+                      <ProjectSelect
+                        label='Amount of Work'
+                        listOfValues={['Little Work', 'Medium Work', 'Much Work']}
+                        handleChange={changeSelect}
+                      />
+                    </Grid>
+                    <PlatformGridList
+                      cols={3}
+                      spacing={1}
+                      cellHeight={60}
+                      justify='flex-start'
+                      style={{margin: 0}}>
+                      <GridListTile cols={3} style={{height: 40}}>
+                        <PlatformsCreate>Platforms</PlatformsCreate>
+                      </GridListTile>
+                      {listOfPlatforms.map((checkBoxValue, i) => {
+                        return (
+                          <GridListTile
+                            key={i}
+                            cols={1}
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              flexDirection: 'column',
+                            }}>
+                            <FormControlLabel
+                              control={
+                                <PlatformCreateCheckbox
+                                  name={checkBoxValue}
+                                  size='small'
+                                  color='primary'
+                                  disableRipple={true}
+                                  icon={<CheckBoxOutlineBlankSharp />}
+                                  checkedIcon={<CheckBoxSharp />}
+                                  onClick={handleFilterClick}
+                                />
+                              }
+                              label={
+                                <FilterStyleTypography
+                                  style={{ fontSize: '0.8em' }}>
+                                  {checkBoxValue}
+                                </FilterStyleTypography>
+                              }
+                              labelPlacement='top'
+                            />
+                          </GridListTile>
+                        );
+                      })}
+                    </PlatformGridList>
+                  </DialogContent>
+                  <DialogActions>
+                    <CancelButton
+                      onClick={handleClose}
+                      startIcon={<DeleteIcon />}>
+                      Cancel
+                    </CancelButton>
+                    <SaveButton onClick={handleSave} startIcon={<SaveIcon />}>
+                      Save
+                    </SaveButton>
+                  </DialogActions>
+                </Dialog>
+              </Grid>
+            </Grid>
+            { window.isMobile && openSearch ? 
+            <Grid>
               <ProjectTextField
                 id='standard-basic'
-                placeholder='Search...'
+                placeholder='Search for Projects'
                 style={{
-                  width: '65vh',
-                  marginLeft: '2em',
+                  marginLeft: '1em',
                   border: '3px',
                   visibility: props.isUserPage ? 'hidden' : null,
                 }}
@@ -212,160 +405,24 @@ function ProjectAppBar(props) {
                 onChange={changeHandler}
                 inputProps={{
                   style: {
-                    paddingTop: '1.5vh',
-                    paddingBottom: '1.5vh',
+                    paddingTop: '4px',
+                    paddingBottom: '4px',
                   },
                 }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon style={{color: '#007afe'}}/>
+                    </InputAdornment>
+                  ),
+                }}
               />
-            </Grid>
-            <Grid
-              container
-              item
-              alignItems='center'
-              justify='flex-end'
-              direction='row'
-              xs={3}>
-              <CreateButton
-                onClick={handleOpen}
-                style={{ visibility: props.isUserPage ? 'hidden' : null }}>
-                <AddIcon />
-                Create a project
-              </CreateButton>
-              <Dialog
-                open={open}
-                onClose={handleClose}
-                fullWidth={true}
-                maxWidth='sm'>
-                <CreateProjectTitle disableTypography={true}>
-                  Create Project
-                </CreateProjectTitle>
-                <DialogContent
-                  style={{ marginLeft: '1rem', marginRight: '4rem' }}>
-                  <ProjectTextField
-                    id='title'
-                    label='Name'
-                    type='text'
-                    variant='outlined'
-                    value={title}
-                    onChange={handleTitleChange}
-                    style={{ marginTop: 0 }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                  />
-                  <TagToolTip title='Use , to seperate tags.' arrow>
-                    <ProjectTextField
-                      id='tags'
-                      label='Tags'
-                      type='text'
-                      variant='outlined'
-                      value={tags}
-                      onChange={handleTagChange}
-                      InputLabelProps={{
-                        shrink: true,
-                      }}
-                    />
-                  </TagToolTip>
-                  <ProjectTextField
-                    id='description'
-                    label='Description'
-                    type='text'
-                    variant='outlined'
-                    value={description}
-                    onChange={handleDescriptionChange}
-                    multiline={true}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    rows={2}
-                  />
-                  <Grid container item direction='row'>
-                    <ProjectSelect
-                      label='Difficulty'
-                      listOfValues={['Beginner', 'Intermediate', 'Advanced']}
-                      handleChange={changeSelect}
-                    />
-                    <ProjectSelect
-                      label='Amount of Work'
-                      listOfValues={['Little Work', 'Medium Work', 'Much Work']}
-                      handleChange={changeSelect}
-                    />
-                  </Grid>
-                  <GridList
-                    cols={4}
-                    style={{
-                      margin: 0,
-                      border: '2px solid #007afe',
-                      borderRadius: '4px',
-                      marginLeft: '0.5rem',
-                      width: '92.5%',
-                    }}
-                    spacing={1}
-                    cellHeight={60}
-                    justify='flex-start'>
-                    <GridListTile cols={4}>
-                      <PlatformsCreate>Platforms</PlatformsCreate>
-                    </GridListTile>
-                    {listOfPlatforms.map((checkBoxValue, i) => {
-                      return (
-                        <GridListTile
-                          key={i}
-                          cols={1}
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            flexDirection: 'column',
-                          }}>
-                          <FormControlLabel
-                            control={
-                              <PlatformCreateCheckbox
-                                name={checkBoxValue}
-                                size='small'
-                                color='primary'
-                                disableRipple={true}
-                                icon={<CheckBoxOutlineBlankSharp />}
-                                checkedIcon={<CheckBoxSharp />}
-                                onClick={handleFilterClick}
-                              />
-                            }
-                            label={
-                              <FilterStyleTypography
-                                style={{ fontSize: '0.8em' }}>
-                                {checkBoxValue}
-                              </FilterStyleTypography>
-                            }
-                            labelPlacement='top'
-                          />
-                        </GridListTile>
-                      );
-                    })}
-                  </GridList>
-                </DialogContent>
-                <DialogActions>
-                  <CancelButton
-                    onClick={handleClose}
-                    startIcon={<DeleteIcon />}>
-                    Cancel
-                  </CancelButton>
-                  <SaveButton onClick={handleSave} startIcon={<SaveIcon />}>
-                    Save
-                  </SaveButton>
-                </DialogActions>
-              </Dialog>
-              {props.user ? (
-                <UserIconMenu
-                  username={props.user.nickname}
-                  userPicture={props.user.picture}
-                />
-              ) : (
-                <LoginButton />
-              )}
-            </Grid>
+            </Grid> : <></>
+            }
           </Grid>
         </Toolbar>
       </AppBar>
-      <Toolbar />
+      {window.isMobile ? <></> : <Toolbar />}
     </div>
   );
 }

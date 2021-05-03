@@ -7,7 +7,7 @@ function LoginButton() {
 
   return (
     !isAuthenticated && (
-      <CreateButton onClick={loginWithRedirect}>Log in</CreateButton>
+      <CreateButton onClick={loginWithRedirect}>{window.isMobile ? 'Sign In' : 'Sign Up / Sign In'}</CreateButton>
     )
   );
 }

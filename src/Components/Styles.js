@@ -8,6 +8,9 @@ import {
   Tab,
   ListItem,
   Checkbox,
+  Fab,
+  IconButton,
+  GridList,
 } from '@material-ui/core';
 import styled from 'styled-components';
 import React from 'react';
@@ -21,7 +24,7 @@ export const FilterStyleTypography = styled(Typography)`
 export const ProjectsTitleText = styled(Typography)`
   font-family: Montserrat;
   color: black;
-  font-size: 1.75rem;
+  font-size: 1.1rem;
   margin-left: 0.7rem;
   font-weight: bolder;
 `;
@@ -30,7 +33,8 @@ export const ProjectsDescriptionText = styled(Typography)`
   font-family: Montserrat;
   color: black;
   margin-left: 1rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  overflow: scroll;
 `;
 
 export const BookmarkText = styled(Typography)`
@@ -40,6 +44,25 @@ export const BookmarkText = styled(Typography)`
   border: none;
   text-transform: none;
 `;
+
+export const FilterButton = styled(Fab)`
+  background-color: white;
+  color: #007afe;
+  float: right;
+  margin: 1rem;
+`
+
+export const UserIconButton = styled(Button)`
+  padding: 0;
+  margin-left: 0.5rem;
+  min-width: 0;
+`
+
+export const CloseIconButton = styled(IconButton)`
+  color: black;
+  float: right;
+  font-size: 1.2rem;
+`
 
 export const BookmarkButton = materialStyle(({ isBookmarked, ...other }) => (
   <Button {...other} />
@@ -55,7 +78,6 @@ export const CreateProjectTitle = styled(DialogTitle)`
   font-family: Montserrat;
   color: #007afe;
   font-size: 1.5rem;
-  margin-left: 1.5rem;
   font-weight: bolder;
 `;
 
@@ -87,16 +109,33 @@ export const CreateButton = styled(Button)`
   background-color: white;
   text-transform: none;
   float: right;
-  color: #007afe;
+  color: #7b7b7b;
   font-weight: normal;
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-family: Montserrat;
-  padding: 0.75rem;
+  padding: 0.1rem 0.4rem;
+  .add-icon {
+    color: #007afe;
+  }
   &:hover {
     color: white;
     background-color: #007afe;
+    .add-icon {
+      color: white;
+    }
   }
 `;
+
+export const SearchButton = styled(Button)`
+  text-transform: none;
+  float: right;
+  color: #007afe;
+  font-weight: normal;
+  font-size: 0.85rem;
+  font-family: Montserrat;
+  padding: 0;
+  min-width: 0;
+` 
 
 export const SaveButton = styled(Button)`
   background-color: white;
@@ -126,7 +165,6 @@ export const CancelButton = styled(Button)`
 
 export const CreateSelect = styled(TextField)`
   margin: 0.5rem;
-  width: 45%;
   & .MuiOutlinedInput-notchedOutline {
     border-color: #e0e3e3;
   }
@@ -158,7 +196,7 @@ export const TagToolTip = styled((props) => (
 export const UserTab = styled(Tab)`
   font-family: Montserrat;
   font-weight: bold;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   border-bottom: 2px solid #99a3ad;
 `;
 
@@ -187,6 +225,7 @@ export const ShowMoreButton = styled(Button)`
   font-family: Montserrat;
   font-size: 0.625rem;
   border: none;
+  margin-left: 0.6rem;
   text-transform: none;
   &:hover {
     background-color: transparent;
@@ -199,7 +238,7 @@ export const PlatformsCreate = styled(Typography)`
   font-size: 1.25rem;
   color: black;
   font-weight: bold;
-  margin-left: 0.5rem;
+  padding-left: 0.5rem;
 `;
 
 export const PlatformCreateCheckbox = styled(Checkbox)`
@@ -275,3 +314,12 @@ export const PageCursor = styled(Button)`
   margin-right: 0.4rem;
   color: #383838;
 `;
+
+export const PlatformGridList = styled(GridList)`
+  border: 2px solid #007afe;
+  border-radius: 4px;
+  overflow-y: revert;
+  & .MuiGridList-root {
+    overflow-y: none;
+  }
+`

@@ -16,6 +16,7 @@ function ProjectSelect(props) {
       label={props.label}
       value={value}
       onChange={handleChange}
+      style={{ width: window.isMobile ? '80%':'45%'}}
       SelectProps={{
         MenuProps: {
           anchorOrigin: {
@@ -25,7 +26,7 @@ function ProjectSelect(props) {
           getContentAnchorEl: null,
           PaperProps: {
             style: {
-              maxHeight: '13.5%',
+              maxHeight: window.isMobile ? '25%' : '13.5%',
             },
           },
         },

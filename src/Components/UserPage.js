@@ -79,14 +79,19 @@ function UserPage() {
       />
       <Grid
         container
-        alignItems='center'
+        alignItems='flex-start'
         alignContent='center'
-        justify='center'>
-        <Grid xs={6} item>
+        justify='center'
+        style={{
+          width: window.isMobile ? '100%':'60%',
+          margin: '0 auto'
+        }}>
+        <Grid style={{ width:'100%'}}item>
           <Tabs
             value={value}
             onChange={handleChange}
             variant='fullWidth'
+            centered
             style={{
               backgroundColor: 'white',
               boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
@@ -101,6 +106,10 @@ function UserPage() {
               disableTags={true}
               filterProject={filterSubmitted}
               filterType='submitted'
+              search={''}
+              platforms={[]}
+              difficulties={[]}
+              amountOfWork={[]}
               userSub={user.sub}
               isAuthenticated={isAuthenticated}
               loginWithRedirect={() => loginWithRedirect()}
@@ -111,6 +120,10 @@ function UserPage() {
               disableTags={true}
               filterProject={filterLiked}
               filterType='upvoted'
+              search={''}
+              platforms={[]}
+              difficulties={[]}
+              amountOfWork={[]}
               userSub={user.sub}
               isAuthenticated={isAuthenticated}
               loginWithRedirect={() => loginWithRedirect()}
@@ -121,6 +134,10 @@ function UserPage() {
               disableTags={true}
               filterProject={filterBookmarked}
               filterType='bookmarked'
+              search={''}
+              platforms={[]}
+              difficulties={[]}
+              amountOfWork={[]}
               userSub={user.sub}
               isAuthenticated={isAuthenticated}
               loginWithRedirect={() => loginWithRedirect()}

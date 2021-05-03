@@ -7,7 +7,7 @@ function Loading(props) {
     <div
       style={{
         display: 'grid',
-        height: '100vh',
+        height: '60vh',
         margin: 0,
         placeItems: 'center center',
       }}>

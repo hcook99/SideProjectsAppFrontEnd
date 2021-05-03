@@ -29,7 +29,7 @@ function ListOfCheckBoxes(props) {
           control={
             <FilterCheckbox
               name={key}
-              value={value}
+              checked={value}
               size='small'
               color='primary'
               disableRipple={true}

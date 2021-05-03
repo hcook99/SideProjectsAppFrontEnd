@@ -8,6 +8,9 @@ export const GET_ALL_PROJECTS = gql`
     $platforms: [String]
     $difficulties: [String]
     $amountOfWork: [String]
+    $creatorUserId: String!
+    $likeUserId: String!
+    $bookmarkUserId: String!
     $limit: Int!
     $after: String!
   ) {
@@ -17,6 +20,9 @@ export const GET_ALL_PROJECTS = gql`
         platformsContains: $platforms
         difficultyArray: $difficulties
         amountOfWorkArray: $amountOfWork
+        creatorUserIdEqual: $creatorUserId
+        likeUserIdEqual: $likeUserId
+        bookmarkUserIdEqual: $bookmarkUserId
       }
       first: $limit
       after: $after

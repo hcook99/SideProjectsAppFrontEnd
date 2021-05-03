@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Menu, MenuItem, Avatar, Button } from '@material-ui/core';
+import { Menu, MenuItem, Avatar } from '@material-ui/core';
+import { UserIconButton } from './Styles'
 import { withRouter } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -26,16 +27,19 @@ function UserIconMenu(props) {
     setOpen(event.currentTarget);
   };
 
+  const openCreateDialog = () => {
+    props.openDialog();
+  }
+
   return (
     <div>
-      <Button
+      <UserIconButton
         edge='end'
         onClick={handleClick}
-        size='medium'
-        disableRipple={true}
-        style={{ backgroundColor: 'transparent' }}>
+        size='small'
+        disableRipple={true}>
         <Avatar src={props.userPicture} variant='rounded' alt='User image' />
-      </Button>
+      </UserIconButton>
       <Menu
         anchorEl={open}
         getContentAnchorEl={null}
@@ -46,6 +50,10 @@ function UserIconMenu(props) {
         open={Boolean(open)}
         onClose={handleClose}>
         <MenuItem onClick={goToUserPage}>My Profile</MenuItem>
+        {
+          window.isMobile ? 
+            <MenuItem onClick={openCreateDialog}>Create Project</MenuItem> : <></>
+        }
         <MenuItem onClick={logoutButton}>Logout</MenuItem>
       </Menu>
     </div>

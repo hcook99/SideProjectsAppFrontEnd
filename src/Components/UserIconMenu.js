@@ -49,12 +49,12 @@ function UserIconMenu(props) {
         keepMounted
         open={Boolean(open)}
         onClose={handleClose}>
-        <MenuItem onClick={goToUserPage}>My Profile</MenuItem>
-        {
-          window.isMobile ? 
-            <MenuItem onClick={openCreateDialog}>Create Project</MenuItem> : <></>
-        }
-        <MenuItem onClick={logoutButton}>Logout</MenuItem>
+          <MenuItem onClick={goToUserPage}>My Profile</MenuItem>
+          {
+            window.isMobile ? 
+              <MenuItem onClick={openCreateDialog}>Create Project</MenuItem> : <div></div>
+          }
+          <MenuItem onClick={logoutButton}>Logout</MenuItem>
       </Menu>
     </div>
   );

@@ -22,6 +22,7 @@ function ListOfCheckBoxes(props) {
 
   let listOfCheckBoxTemp = [];
   let i = 0;
+
   for (const [key, value] of Object.entries(props.listOfCheckBoxLabel)) {
     listOfCheckBoxTemp.push(
       <ListItemCheckbox key={i}>
@@ -57,15 +58,17 @@ function ListOfCheckBoxes(props) {
           {props.categoryTitle}
         </FilterStyleTypography>
       </ListItem>
-      {listOfCheckBoxTemp.slice(0, 3)}
-      {listOfCheckBoxTemp.length < 4 ? null : (
-        <div>
-          <Collapse in={showMore}>{listOfCheckBoxTemp.slice(3)}</Collapse>
-          <ShowMoreButton onClick={handleShowMore} disableRipple={true}>
-            Show {showMore ? 'less' : 'more'}...
-          </ShowMoreButton>
-        </div>
-      )}
+      {window.isMobile ? listOfCheckBoxTemp : 
+        (listOfCheckBoxTemp.slice(0, 3),
+        listOfCheckBoxTemp.length < 4 ? null : (
+          <div>
+            <Collapse in={showMore}>{listOfCheckBoxTemp.slice(3)}</Collapse>
+            <ShowMoreButton onClick={handleShowMore} disableRipple={true}>
+              Show {showMore ? 'less' : 'more'}...
+            </ShowMoreButton>
+          </div>
+        ))
+      }
     </div>
   );
 }

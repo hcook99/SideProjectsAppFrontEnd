@@ -63,8 +63,8 @@ function ProjectList(props) {
   let amountOfWorkFlattened = props.amountOfWork ? flattenObjectToArray(props.amountOfWork) : '';
 
   const varsForSearch = {
-    title: props.tags ? '%%' : `%${props.search}%`,
-    description: props.tags ? '%%' : `%${props.search}%`,
+    title: props.tags ? '' : `%${props.search}%`,
+    description: props.tags ? '' : `%${props.search}%`,
     tags: `%${props.search}%`,
     platforms: platformFlattened,
     creatorUserId: props.filterType === 'submitted' ? getUserIdentifier(props.userSub) : '',
@@ -335,7 +335,7 @@ function ProjectList(props) {
                         onClick={(event) => {
                           event.stopPropagation();
                           clickBuiltInTag(
-                            project.node.difficulty,
+                            titleCase(project.node.difficulty),
                             'Difficulty'
                           );
                         }}>
@@ -347,8 +347,8 @@ function ProjectList(props) {
                         onClick={(event) => {
                           event.stopPropagation();
                           clickBuiltInTag(
-                            project.node.amountOfWork,
-                            'Amount Of Work'
+                            `${titleCase(project.node.amountOfWork)} Work`,
+                            'Amount of Work'
                           );
                         }}>
                         {titleCase(project.node.amountOfWork)} Work
@@ -376,7 +376,7 @@ function ProjectList(props) {
                         );
                       }
                       else {
-                        return <></>
+                        return <div key={i}></div>
                       }
                     })}
                   </Grid>

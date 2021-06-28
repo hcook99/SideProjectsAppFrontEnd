@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Typography,
   Grid,
@@ -8,11 +9,16 @@ import {
   Collapse,
   List,
   Paper,
+  ListItemSecondaryAction,
+  DialogActions,
+  Dialog,
+  DialogTitle
 } from '@material-ui/core';
 import {
   UPDATE_LIKE,
   UPDATE_BOOKMARK,
   GET_ALL_PROJECTS,
+  DELETE_PROJECT
 } from '../graphqlQueries/index';
 import { useMutation, useQuery } from '@apollo/client';
 import Loading from './Loading';
@@ -25,9 +31,14 @@ import {
   BuiltinTags,
   Tag,
   PageCursor,
+  MoreButton,
+  DeleteTitle,
+  CancelButton as DeleteButton,
+  CancelDeleteButton
 } from './Styles';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
+import DeleteIcon from '@material-ui/icons/Delete';
 import created from '../create.svg';
 import liked from '../liked.svg';
 import bookmarked from '../bookmark.svg';
@@ -35,11 +46,30 @@ import ReactMarkdown from 'react-markdown';
 import gfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
+const useStateWithLocalStorage = localStorageKey => {
+  
+  const temp = JSON.parse(sessionStorage.getItem(localStorageKey)) || ['']
+  
+  const [value, setValue] = React.useState(temp);
+ 
+  React.useEffect(() => {
+    sessionStorage.setItem(localStorageKey, JSON.stringify(value));
+  }, [localStorageKey, value]);
+ 
+  return [value, setValue];
+};
+
 function ProjectList(props) {
   const [addLike] = useMutation(UPDATE_LIKE);
   const [addBookmark] = useMutation(UPDATE_BOOKMARK);
-  const [openDescription, setOpenDescription] = React.useState([]);
-  const [cursor, setCursor] = React.useState(['']);
+  const [deleteProject] = useMutation(DELETE_PROJECT);
+  const [openDescription, setOpenDescription] = useState([]);
+  const [cursor, setCursor] = useStateWithLocalStorage('cursors');
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
+
+  React.useEffect(() => {
+    return () => localStorage.setItem("cursors", JSON.stringify(cursor));
+  }, [cursor]);
 
   const flattenObjectToArray = (objectToConvert) => {
     return Object.entries(objectToConvert).filter(([key, value])=>{
@@ -56,7 +86,6 @@ function ProjectList(props) {
       return found.groups.identifier;
     }
   };
-
 
   let platformFlattened = props.platforms ? flattenObjectToArray(props.platforms) : [];
   let difficultiesFlattened = props.difficulties ? flattenObjectToArray(props.difficulties) : '';
@@ -157,6 +186,23 @@ function ProjectList(props) {
     }
   };
 
+  const deleteProjectDialog = async (projectId) => {
+    setOpenDeleteDialog(false);
+    if (!props.isAuthenticated) {
+      await props.loginWithRedirect();
+    } else {
+      try {
+        await deleteProject({ variables: { projectId } });
+      } catch (err) {
+        console.log(err);
+      }
+      if(projects.length-1===0){
+        previousPage();
+      }
+      refetch();
+    }
+  }
+
   const checkIfBookmarked = (projectBookmark, userSub) => {
     return projectBookmark.edges.some(
       (bookmark) => bookmark.node.userId === getUserIdentifier(userSub)
@@ -166,6 +212,7 @@ function ProjectList(props) {
   const nextPage = () => {
     let temp = [...cursor];
     temp.push(data.allProjects.pageInfo.endCursor);
+    localStorage.setItem('cursors', JSON.stringify(temp));
     setCursor(temp);
     window.scrollTo(0, 0);
   };
@@ -394,6 +441,37 @@ function ProjectList(props) {
               </React.Fragment>
             }
           />
+          { project.node.creatorUserId===getUserIdentifier(props.userSub) &&
+           <ListItemSecondaryAction>
+            <MoreButton edge="end"
+             aria-label="more" 
+             size='small' 
+             onClick={(event)=> {
+               event.stopPropagation();
+               setOpenDeleteDialog(true);
+              }}>
+              <DeleteIcon />
+            </MoreButton>
+            <Dialog
+              open={openDeleteDialog}
+              onClose={()=>setOpenDeleteDialog(false)}  
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description">
+              <DialogTitle>
+                <DeleteTitle>Are you sure you want to delete project?</DeleteTitle>
+              </DialogTitle>
+              <DialogActions>
+                <CancelDeleteButton onClick={()=>setOpenDeleteDialog(false)}>
+                  Cancel
+                </CancelDeleteButton>
+                <DeleteButton
+                  onClick={()=>deleteProjectDialog(project.node.id)}
+                  startIcon={<DeleteIcon />} autoFocus>
+                  Delete
+                </DeleteButton>
+              </DialogActions>
+            </Dialog>
+          </ListItemSecondaryAction>}
         </ListItem>
       ))}
       <ListItem>
@@ -416,4 +494,4 @@ function ProjectList(props) {
   );
 }
 
-export default ProjectList;
+export default withRouter(ProjectList);

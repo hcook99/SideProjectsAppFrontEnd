@@ -10,7 +10,7 @@ import {
   Checkbox,
   Fab,
   IconButton,
-  GridList,
+  GridList
 } from '@material-ui/core';
 import styled from 'styled-components';
 import React from 'react';
@@ -161,6 +161,14 @@ export const CancelButton = styled(Button)`
     color: white;
     background-color: #ff1500;
   }
+`;
+
+export const CancelDeleteButton = styled(Button)`
+  background-color: white;
+  text-transform: none;
+  font-weight: normal;
+  font-size: 1rem;
+  font-family: Montserrat;
 `;
 
 export const CreateSelect = styled(TextField)`
@@ -320,4 +328,15 @@ export const PlatformGridList = styled(GridList)`
   border-radius: 4px;
   overflow-y: revert;
   margin: 0.5rem;
+`
+
+export const MoreButton = styled(IconButton)`
+  background-color: white;
+  color: red;
+`
+
+export const DeleteTitle = styled(Typography)`
+  font-family: Montserrat;
+  font-size: large;
+  font-weight: bold;
 `

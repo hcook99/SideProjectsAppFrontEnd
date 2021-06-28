@@ -13,6 +13,10 @@ function UserIconMenu(props) {
     setOpen(null);
   };
 
+  const handleClick = (event) => {
+    setOpen(event.currentTarget);
+  };
+
   const logoutButton = () => {
     if (isAuthenticated) {
       logout();
@@ -21,10 +25,6 @@ function UserIconMenu(props) {
 
   const goToUserPage = () => {
     props.history.push(`/user`);
-  };
-
-  const handleClick = (event) => {
-    setOpen(event.currentTarget);
   };
 
   const openCreateDialog = () => {
